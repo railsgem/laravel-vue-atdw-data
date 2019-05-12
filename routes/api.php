@@ -18,3 +18,5 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::middleware('api')->get('products','ApiController@getProductData');
+Route::middleware('api')->get('areas','ApiController@getAreas');
+Route::middleware('api')->get('regions','ApiController@getRegions');
