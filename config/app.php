@@ -56,6 +56,8 @@ return [
 
     'asset_url' => env('ASSET_URL', null),
 
+    'atlas_api_key' => env('ATLAS_API_KEY', null),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
