@@ -6,8 +6,11 @@
 
 require('./bootstrap');
 
+
 window.Vue = require('vue');
 Vue.use(require('vue-resource'));
+Vue.use(require('vue-select'));
+import vSelect from 'vue-select'
 
 /**
  * The following block of code may be used to automatically register your
@@ -23,6 +26,7 @@ Vue.use(require('vue-resource'));
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 Vue.component('InfiniteLoading', require('vue-infinite-loading'));
+Vue.component('v-select', vSelect);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
