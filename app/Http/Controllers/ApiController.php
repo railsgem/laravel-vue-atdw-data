@@ -6,14 +6,18 @@ use Illuminate\Http\Request;
 
 class ApiController extends Controller
 {
-    public function getProductData()
+    public function getProductData(Request $request)
     {
+        $query = $request->getQueryString();
         $apiKey = config('app.atlas_api_key');
-        $url = 'https://atlas.atdw-online.com.au/api/atlas/mlp?key='. $apiKey .'&productId=56b25d622cbcbe7073ad6a45&latlong=-27.892494,153.286743&dist=100&out=json';
+        $url = 'https://atlas.atdw-online.com.au/api/atlas/products?key='. $apiKey .'&'. $query .'&out=json';
         $client = new \GuzzleHttp\Client();
         $response = $client->request('GET', $url);
         $result = json_decode(mb_convert_encoding($response->getBody() , 'UTF-8' , 'UTF-16LE'));
         return response()
             ->json($result);
     }
+
+    // https://[host]/api/atlas/areas?key=[key]
+    // https://[host]/api/atlas/regions?key=[key]&st=QLD
 }
