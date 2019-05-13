@@ -1,9 +1,16 @@
 <template>
     <div class="container" style="margin-top:50px;">
         <el-dialog :visible.sync="showModal" title="ProductDetails">
-            <pre>
-                {{productDetails}}
-            </pre>
+            <!-- <pre v-loading="productDetailLoading">
+                {{productDetails && productDetails.productName}}
+            </pre> -->
+            <el-table :data="productDetails" v-loading="productDetailLoading">
+                <el-table-column property="attribute" label="attribute"></el-table-column>
+                <el-table-column property="value" label="value"></el-table-column>
+            </el-table>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="showModal = false">Confirm</el-button>
+            </span>
         </el-dialog>
         <div class="row justify-content-center">
             <div class="col-md-10">
@@ -80,15 +87,30 @@
     </div>
 </template>
 
+<style>
+  body {
+    margin: 0;
+  }
+</style>
 <script>
     export default {
         mounted() {
+            const tableLoading = this.$loading({
+                lock: true,
+                text: 'Loading',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)'
+            });
+            this.fullScreenLoading = tableLoading;
             console.log('Component mounted.');
             this.fetchAreaAndRegionData();
         },
         data() {
             return {
-                productDetails: null,
+                formLabelWidth: '120px',
+                productDetailLoading: true,
+                fullscreenLoading: false,
+                productDetails: [],
                 showModal: false,
                 selected: null,
                 regions:[],
@@ -125,17 +147,27 @@
                         $.each(data, function(key, value) {
                             vm.areas.push(value.Name);
                         });
+                        // close the full screen loading
+                        vm.fullScreenLoading.close();
                     });
             },
             getProductDetails(index, row) {
                 let vm = this;
                 this.showModal = true;
+                vm.productDetailLoading = true;
                  console.log(index, row);
                 this.$http.get('/api/product?productId=' + row.productId)
                     .then(response => {
                         return response.json();
                     }).then(data => {
-                        vm.productDetails = data;
+                        $.each(data, function(key, value) {
+                             if (value != null && typeof value == 'object') {
+                                vm.productDetails.push({ attribute: key, value: JSON.stringify(value)});
+                             } else {
+                                vm.productDetails.push({ attribute: key, value: value});
+                             }
+                        });
+                        vm.productDetailLoading = false;
                     });
             },
             infiniteHandler($state) {
