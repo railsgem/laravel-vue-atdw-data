@@ -6,11 +6,24 @@ use Illuminate\Http\Request;
 
 class ApiController extends Controller
 {
-    public function getProductData(Request $request)
+    public function getProductList(Request $request)
     {
         $query = $request->getQueryString();
         $apiKey = config('app.atlas_api_key');
         $url = 'https://atlas.atdw-online.com.au/api/atlas/products?key='. $apiKey .'&'. $query .'&out=json';
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('GET', $url);
+        $result = json_decode(mb_convert_encoding($response->getBody() , 'UTF-8' , 'UTF-16LE'));
+        return response()
+            ->json($result);
+    }
+
+    public function getProductDetails(Request $request)
+    {
+        // EXAMPLE : https://atlas.atdw-online.com.au/api/atlas/product?key=&productId=56b25d272880253d74c4464d&out=json
+        $query = $request->getQueryString();
+        $apiKey = config('app.atlas_api_key');
+        $url = 'https://atlas.atdw-online.com.au/api/atlas/product?key='. $apiKey .'&'. $query .'&out=json';
         $client = new \GuzzleHttp\Client();
         $response = $client->request('GET', $url);
         $result = json_decode(mb_convert_encoding($response->getBody() , 'UTF-8' , 'UTF-16LE'));

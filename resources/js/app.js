@@ -6,10 +6,13 @@
 
 require('./bootstrap');
 
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 
 window.Vue = require('vue');
 Vue.use(require('vue-resource'));
 Vue.use(require('vue-select'));
+Vue.use(ElementUI);
 import vSelect from 'vue-select'
 
 /**
@@ -23,7 +26,7 @@ import vSelect from 'vue-select'
 // const files = require.context('./', true, /\.vue$/i);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+Vue.component('product-list-component', require('./components/ProductListComponent.vue').default);
 
 Vue.component('InfiniteLoading', require('vue-infinite-loading'));
 Vue.component('v-select', vSelect);

@@ -1,9 +1,14 @@
 <template>
     <div class="container" style="margin-top:50px;">
+        <el-dialog :visible.sync="showModal" title="ProductDetails">
+            <pre>
+                {{productDetails}}
+            </pre>
+        </el-dialog>
         <div class="row justify-content-center">
             <div class="col-md-10">
                 <div class="card">
-                    <div class="card-header"><strong> Laravel Vue JS Infinite Scroll</strong></div>
+                    <div class="card-header"><strong> Project List (Infinite Scroll)</strong></div>
 
                     <div class="card-body">
                         <form>
@@ -36,12 +41,38 @@
                                 </div>
                             </div>
                         </form>
-                        <div>
-                          <p v-for="(item, $index) in list" :key="$index">
-                            <a v-bind:href="item.productId" target="_blank">{{item. productNumber + ' - '+ item.productName}}</a>
-                          </p>
-                          <infinite-loading :identifier="infiniteId" @distance="1" @infinite="infiniteHandler"></infinite-loading>
-                        </div>
+                        <el-table
+                            :data="list"
+                            height="624"
+                            border>
+                            <el-table-column
+                            prop="productNumber"
+                            label="ProductNumber"
+                            width="125">
+                            </el-table-column>
+                            <el-table-column
+                            prop="productName"
+                            label="ProductName"
+                            >
+                            </el-table-column>
+
+                            <el-table-column
+                            fixed="right"
+                            label="Operations"
+                            prop="productId"
+                            width="120">
+                            <template slot-scope="scope">
+                                <el-button @click="getProductDetails(scope.$index, scope.row)" type="text" size="small">Detail</el-button>
+                            </template>
+                            </el-table-column>
+                            <infinite-loading
+                            slot="append"
+                            :identifier="infiniteId" @distance="1"
+                            @infinite="infiniteHandler"
+                            force-use-infinite-wrapper=".el-table__body-wrapper">
+                            </infinite-loading>
+                        </el-table>
+
                     </div>
                 </div>
             </div>
@@ -57,6 +88,8 @@
         },
         data() {
             return {
+                productDetails: null,
+                showModal: false,
                 selected: null,
                 regions:[],
                 areas:[],
@@ -92,6 +125,17 @@
                         $.each(data, function(key, value) {
                             vm.areas.push(value.Name);
                         });
+                    });
+            },
+            getProductDetails(index, row) {
+                let vm = this;
+                this.showModal = true;
+                 console.log(index, row);
+                this.$http.get('/api/product?productId=' + row.productId)
+                    .then(response => {
+                        return response.json();
+                    }).then(data => {
+                        vm.productDetails = data;
                     });
             },
             infiniteHandler($state) {
