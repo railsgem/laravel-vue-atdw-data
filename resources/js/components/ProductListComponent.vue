@@ -1,9 +1,6 @@
 <template>
     <div class="container" style="margin-top:50px;">
         <el-dialog :visible.sync="showModal" title="ProductDetails">
-            <!-- <pre v-loading="productDetailLoading">
-                {{productDetails && productDetails.productName}}
-            </pre> -->
             <el-table :data="productDetails" v-loading="productDetailLoading">
                 <el-table-column property="attribute" label="attribute"></el-table-column>
                 <el-table-column property="value" label="value"></el-table-column>
@@ -21,65 +18,44 @@
                         <form>
                             <div class="row ">
                                 <div class="col-sm-4">
-                                    Regions: {{region}}
+                                    Regions: {{selectetRegion}}
                                 </div>
                                 <div class="col-sm-8">
-                                    <select v-model="region" @change="changeAreaRegion">
+                                    <select v-model="selectetRegion" @change="changeAreaRegion">
                                         <option value="" selected> All Regions</option>
                                         <option v-for="(option, $index) in regions" :key="$index" v-bind:value="option" >
                                             {{ option }}
                                         </option>
                                     </select>
-                                    <!-- <v-select v-model="region" :options="regions" @selected="changedLabel">></v-select> -->
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-4">
-                                    Areas: {{area}}
+                                    Areas: {{selectetArea}}
                                 </div>
                                 <div class="col-sm-8">
-                                    <select v-model="area" @change="changeAreaRegion">
+                                    <select v-model="selectetArea" @change="changeAreaRegion">
                                         <option value="" selected>All Areas</option>
                                         <option v-for="(option, $index) in areas" :key="$index" v-bind:value="option" >
                                             {{ option }}
                                         </option>
                                     </select>
-                                <!-- <v-select v-model="area" :options="areas"></v-select> -->
                                 </div>
                             </div>
                         </form>
-                        <el-table
-                            :data="list"
-                            height="624"
-                            border>
-                            <el-table-column
-                            prop="productNumber"
-                            label="ProductNumber"
-                            width="125">
+                        <el-table :data="list" height="624" border>
+                            <el-table-column prop="productNumber" label="ProductNumber" width="125">
                             </el-table-column>
-                            <el-table-column
-                            prop="productName"
-                            label="ProductName"
-                            >
+                            <el-table-column prop="productName" label="ProductName">
                             </el-table-column>
-
-                            <el-table-column
-                            fixed="right"
-                            label="Operations"
-                            prop="productId"
-                            width="120">
-                            <template slot-scope="scope">
-                                <el-button @click="getProductDetails(scope.$index, scope.row)" type="text" size="small">Detail</el-button>
-                            </template>
+                            <el-table-column fixed="right" label="Operations" prop="productId" width="120">
+                                <template slot-scope="scope">
+                                    <el-button @click="getProductDetails(scope.$index, scope.row)" type="text" size="small">Detail</el-button>
+                                </template>
                             </el-table-column>
-                            <infinite-loading
-                            slot="append"
-                            :identifier="infiniteId" @distance="1"
-                            @infinite="infiniteHandler"
-                            force-use-infinite-wrapper=".el-table__body-wrapper">
+                            <infinite-loading slot="append" :identifier="infiniteId" @distance="1" @infinite="infiniteHandler" force-use-infinite-wrapper=".el-table__body-wrapper">
                             </infinite-loading>
                         </el-table>
-
                     </div>
                 </div>
             </div>
@@ -87,11 +63,6 @@
     </div>
 </template>
 
-<style>
-  body {
-    margin: 0;
-  }
-</style>
 <script>
     export default {
         mounted() {
@@ -112,15 +83,14 @@
                 fullscreenLoading: false,
                 productDetails: [],
                 showModal: false,
-                selected: null,
                 regions:[],
                 areas:[],
                 list: [],
                 infiniteId: +new Date(),
                 page: 1,
                 size: 10,
-                region: null, //A valid region name or region id or region code.
-                area: null, //A valid area name or area id or area code.
+                selectetRegion: null, //A valid region name or region id or region code.
+                selectetArea: null, //A valid area name or area id or area code.
             };
           },
           methods: {
@@ -155,7 +125,6 @@
                 let vm = this;
                 this.showModal = true;
                 vm.productDetailLoading = true;
-                 console.log(index, row);
                 this.$http.get('/api/product?productId=' + row.productId)
                     .then(response => {
                         return response.json();
@@ -172,18 +141,19 @@
             },
             infiniteHandler($state) {
                 let vm = this;
-                var randSeed = new Date().getFullYear();
+                var today = new Date();
+                var randSeed = today.getFullYear() + '-' + today.getMonth() + '-' + today.getDate();
 
                 var requestParams = {
                     pge: this.page,
                     size: this.size,
                     order: randSeed
                 };
-                if (this.region != null && this.region != "") {
-                    requestParams['rg'] = this.region;
+                if (this.selectetRegion != null && this.selectetRegion != "") {
+                    requestParams['rg'] = this.selectetRegion;
                 }
-                if (this.area != null && this.area != "") {
-                    requestParams['ar'] = this.area;
+                if (this.selectetArea != null && this.selectetArea != "") {
+                    requestParams['ar'] = this.selectetArea;
                 }
                 //Return all listings sorting the results randomly ensuring the results are unique across all pages for the given session.
                 this.$http.get('/api/products', { params: requestParams })
