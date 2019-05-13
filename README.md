@@ -1,72 +1,68 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+# Docker
+For quick development, the Docker [Bitnami Laravel Development Container](https://github.com/bitnami/bitnami-docker-laravel) is used in the project.
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+# Local workspace
+- Clone the repository
+```
+$ git clone https://github.com/railsgem/laravel-vue-atdw-data.git
+$ cd laravel-vue-atdw-data
+$ cp -r .env.example .env 
+```
 
-## About Laravel
+- Then update the **ATLAS_API_KEY** in .env file, the test api key which was provided in the test documentation.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Finally launch the Laravel application development environment using:
+```
+$ docker-compose up
+$ docker-compose exec myapp php artisan key:generate
+$ docker-compose exec myapp php artisan config:cache
+$ docker-compose exec myapp npm install
+$ docker-compose exec myapp npm run dev
+```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+> ## Note
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+> If the application directory contained the source code of an existing Laravel application, the Bitnami Laravel Development Container would load the existing application instead of bootstrapping a new one.
 
-## Learning Laravel
+After the artisan application server has been launched in the myapp service, visit http://localhost:3000 in your favorite web browser and you'll be greeted by the default Laravel welcome page.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+# Executing commands
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1400 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+The general structure of the exec command is:
 
-## Laravel Sponsors
+```
+$ docker-compose exec <service> <command>
+```
+List all artisan commands:
+```
+$ docker-compose exec myapp php artisan list
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+# Reinitialize:
+Delete the file /tmp/initialized.sem and restart the container to reinitialize
+```
+$ docker-compose exec myapp rm -r  /tmp/initialized.sem
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
 
-## Contributing
+# ScreenShots
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+![./ProductList.png](./ProductList.png)
 
-## Security Vulnerabilities
+![./ProductDetails.png](./ProductDetails.png)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# User Documentation
 
-## License
+## 1. Filters
+By changing the Regions or Areas, the table will automatically refresh with the selection.
 
-The Laravel framework is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 2. Product Details
+Clicking the details, the pop up dialog will show the product details in a list of attribute / value pair.
+
+## 3. Infinity scroll
+User are able to scroll up to load a new page.
+
+## 4. Content order is randomised
+Then content order is randomised by passing the random seed `rand_YYYY-MM-DD`.
+
+## 5. Cache (Not implemented)
